@@ -11,13 +11,13 @@ const fs = require("fs");
  * Configuration the default user data path. Just for debug.
  * @readonly
  */
-const DEFAULT_USER_DATA_PATH = path.join(__dirname, "./.openblockData");
+const DEFAULT_USER_DATA_PATH = path.join(__dirname, "../.openblockData");
 
 /**
  * Configuration the default tools path.
  * @readonly
  */
-const DEFAULT_TOOLS_PATH = path.join(__dirname, "./tools");
+const DEFAULT_TOOLS_PATH = path.join(__dirname, "../tools");
 
 /**
  * Configuration the default host.

@@ -1,0 +1,96 @@
+{
+    "name": "nomolink",
+    "version": "1.0.0",
+    "description": "Driver for connecting to Nomolink-gui",
+    "main": "main.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "start": "electron-forge start",
+        "package": "electron-forge package",
+        "build": "electron-builder",
+        "fetch": "rimraf tools firmwares && node script/download-tools.js && node script/download-firmwares.js",
+        "start-server": "node test/start-server.js --log-level=info",
+        "make": "electron-forge make"
+    },
+    "build": {
+        "appId": "Nomolink",
+        "win": {
+            "target": [
+                "nsis"
+            ],
+            "icon": "assets/icons/icon.ico"
+        },
+        "nsis": {
+            "oneClick": true,
+            "allowToChangeInstallationDirectory": true,
+            "uninstallDisplayName": "Nomolink-uninstaller",
+            "installerIcon": "assets/icons/icon.ico",
+            "uninstallerIcon": "assets/icons/icon.ico",
+            "installerHeaderIcon": "assets/icons/icon.ico",
+            "createDesktopShortcut": true,
+            "createStartMenuShortcut": true,
+            "shortcutName": "Nomolink"
+        }
+    },
+    "author": "fajar",
+    "license": "ISC",
+    "devDependencies": {
+        "@electron-forge/cli": "^6.0.0-beta.67",
+        "@electron-forge/maker-deb": "^6.0.0-beta.67",
+        "@electron-forge/maker-rpm": "^6.0.0-beta.67",
+        "@electron-forge/maker-squirrel": "^6.0.0-beta.67",
+        "@electron-forge/maker-zip": "^6.0.0-beta.67",
+        "babel-eslint": "^10.0.1",
+        "electron": "^20.2.0",
+        "eslint": "^5.3.0",
+        "eslint-config-scratch": "^5.0.0",
+        "jsdoc": "^3.6.6",
+        "rimraf": "^3.0.2",
+        "electron-builder": "^23.6.0"
+    },
+    "dependencies": {
+        "@abandonware/noble": "^1.9.2-10",
+        "ansi-string": "^0.2.1",
+        "cli-color": "^2.0.1",
+        "download-github-release": "^0.3.2",
+        "electron-squirrel-startup": "^1.0.0",
+        "https": "^1.0.0",
+        "install": "^0.13.0",
+        "js-yaml": "^4.0.0",
+        "kill-port": "^2.0.1",
+        "node-fetch": "^2.6.7",
+        "node-gyp": "^9.2.0",
+        "port": "^0.8.1",
+        "serialport": "^10.4.0",
+        "ws": "^7.1.1"
+    },
+    "config": {
+        "forge": {
+            "packagerConfig": {
+                "icon": "assets/icons/icon.ico"
+            },
+            "makers": [
+                {
+                    "name": "@electron-forge/maker-squirrel",
+                    "config": {
+                        "name": "nomolink"
+                    }
+                },
+                {
+                    "name": "@electron-forge/maker-zip",
+                    "platforms": [
+                        "darwin"
+                    ]
+                },
+                {
+                    "name": "@electron-forge/maker-deb",
+                    "config": {}
+                },
+                {
+                    "name": "@electron-forge/maker-rpm",
+                    "config": {}
+                }
+            ]
+        }
+    }
+}

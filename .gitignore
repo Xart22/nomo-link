@@ -1,0 +1,14 @@
+# npm file
+node_modules/
+
+# Mac
+.DS_Store
+
+# Binary tools
+tools/
+firmwares/
+dist/
+
+out/
+
+src/.openblockData

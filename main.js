@@ -174,8 +174,8 @@ Menu.setApplicationMenu(menu);
 let win;
 async function createWindow() {
     win = new BrowserWindow({
-        width: 400,
-        height: 430,
+        width: 350,
+        height: 280,
         webPreferences: {
             nodeIntegration: true,
             preload: path.join(__dirname, "preload.js"),
@@ -390,9 +390,7 @@ app.on("ready", async () => {
             })
             .then((result) => {
                 if (result.response === 0) {
-                    app.exit();
-                    app.quit();
-                    autoUpdater.quitAndInstall(false, false);
+                    autoUpdater.quitAndInstall();
                 }
             });
     });

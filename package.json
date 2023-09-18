@@ -1,6 +1,6 @@
 {
     "name": "nomolink",
-    "version": "1.0.3",
+    "version": "1.0.4",
     "description": "Nomolink",
     "main": "main.js",
     "scripts": {
@@ -33,7 +33,7 @@
         },
         "nsis": {
             "artifactName": "Nomolink-setup-${version}.${ext}",
-            "oneClick": false,
+            "oneClick": true,
             "uninstallDisplayName": "Nomolink-uninstaller",
             "installerIcon": "assets/icons/icon.ico",
             "allowToChangeInstallationDirectory": false,
@@ -54,8 +54,8 @@
         "@electron-forge/maker-squirrel": "^6.0.5",
         "@electron-forge/maker-zip": "^6.0.5",
         "babel-eslint": "^10.0.1",
-        "electron": "^20.3.12",
-        "electron-builder": "^23.6.0",
+        "electron": "^26.2.1",
+        "electron-builder": "^24.6.4",
         "eslint": "^5.3.0",
         "eslint-config-scratch": "^5.0.0",
         "jsdoc": "^3.6.6",
@@ -70,7 +70,7 @@
         "download-github-release": "^0.3.2",
         "electron-log": "^4.4.8",
         "electron-squirrel-startup": "^1.0.0",
-        "electron-updater": "^5.3.0",
+        "electron-updater": "^6.1.4",
         "extract-zip": "^2.0.1",
         "fs": "^0.0.1-security",
         "https": "^1.0.0",

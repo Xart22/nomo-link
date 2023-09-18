@@ -35,50 +35,49 @@ window.addEventListener("DOMContentLoaded", async () => {
         });
         socket.connect(port, host);
     };
-    checkPort(20111, "127.0.0.1", (isPortOpen) => {
-        if (isPortOpen) {
-            loader.style.display = "none";
-            wraperUpdate.style.display = "none";
-            statusNomoLink.innerHTML = `<span class="dot"></span> Online`;
-            dot[0].style.backgroundColor = "green";
-            btnNomo.style.display = "block";
-            allowSSL.style.display = "block";
-            wraperStatusNomoLink.style.display = "block";
-        } else {
-            statusNomoLink.innerHTML = `<span class="dot"></span> Offline`;
-            dot[0].style.backgroundColor = "red";
-            btnNomo.style.display = "none";
-            allowSSL.style.display = "none";
-        }
-    });
-
     async function openNomokit() {
         await shell.openExternal("https://nomo-kit.com/");
     }
     async function allowSsl() {
         await shell.openExternal("https:127.0.0.1:20111/");
     }
-
-    btnNomo.addEventListener("click", openNomokit);
-    allowSSL.addEventListener("click", allowSsl);
-
-    addZip.addEventListener("click", async () => {
-        fileZip.click();
-        fileZip.addEventListener("change", async () => {
-            loader.style.display = "block";
-            btnNomo.disabled = true;
-            allowSSL.disabled = true;
-            addZip.disabled = true;
-            const file = fileZip.files[0];
-            const reader = new FileReader();
-            reader.readAsArrayBuffer(file);
-            reader.onload = async () => {
-                const data = new Uint8Array(reader.result);
-                ipcRenderer.send("addZip", { data: data, name: file.name });
-                fileZip.value = "";
-            };
+    if (btnNomo) {
+        checkPort(20111, "127.0.0.1", (isPortOpen) => {
+            if (isPortOpen) {
+                loader.style.display = "none";
+                wraperUpdate.style.display = "none";
+                statusNomoLink.innerHTML = `<span class="dot"></span> Online`;
+                dot[0].style.backgroundColor = "green";
+                btnNomo.style.display = "block";
+                allowSSL.style.display = "block";
+                wraperStatusNomoLink.style.display = "block";
+            } else {
+                statusNomoLink.innerHTML = `<span class="dot"></span> Offline`;
+                dot[0].style.backgroundColor = "red";
+                btnNomo.style.display = "none";
+                allowSSL.style.display = "none";
+            }
         });
-    });
+        btnNomo.addEventListener("click", openNomokit);
+        allowSSL.addEventListener("click", allowSsl);
+        addZip.addEventListener("click", async () => {
+            fileZip.click();
+            fileZip.addEventListener("change", async () => {
+                loader.style.display = "block";
+                btnNomo.disabled = true;
+                allowSSL.disabled = true;
+                addZip.disabled = true;
+                const file = fileZip.files[0];
+                const reader = new FileReader();
+                reader.readAsArrayBuffer(file);
+                reader.onload = async () => {
+                    const data = new Uint8Array(reader.result);
+                    ipcRenderer.send("addZip", { data: data, name: file.name });
+                    fileZip.value = "";
+                };
+            });
+        });
+    }
 
     ipcRenderer.on("addZip-reply", (event, arg) => {
         loader.style.display = "none";

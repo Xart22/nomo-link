@@ -5,6 +5,7 @@ body {
     color: #333;
     margin: 0;
     padding: 0;
+    overflow: hidden;
 }
 
 .dot {
@@ -101,4 +102,8 @@ body {
     100% {
         transform: rotate(360deg);
     }
+}
+
+#wraperUpdate {
+    position: absolute;
 }

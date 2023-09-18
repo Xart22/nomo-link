@@ -187,7 +187,7 @@ async function createWindow() {
         resizable: false,
     });
 
-    win.webContents.openDevTools();
+    // win.webContents.openDevTools();
     var contextMenu = Menu.buildFromTemplate([
         {
             label: "Show App",

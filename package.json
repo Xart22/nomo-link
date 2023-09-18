@@ -1,11 +1,11 @@
 {
     "name": "nomolink",
-    "version": "1.0.4",
+    "version": "1.0.3",
     "description": "Nomolink",
     "main": "main.js",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
-        "start": "electron-forge start",
+        "start": "electron .",
         "package": "electron-forge package",
         "build": "electron-builder",
         "fetch": "rimraf tools firmwares && node script/download-tools.js && node script/download-firmwares.js",
@@ -18,7 +18,7 @@
         "releaseType": "release"
     },
     "build": {
-        "appId": "Nomolink",
+        "appId": "com.nomolink.desktop",
         "productName": "Nomolink",
         "asar": false,
         "win": {
@@ -28,8 +28,7 @@
             "target": [
                 "nsis"
             ],
-            "icon": "assets/icons/icon.ico",
-            "requestedExecutionLevel": "requireAdministrator"
+            "icon": "assets/icons/icon.ico"
         },
         "nsis": {
             "artifactName": "Nomolink-setup-${version}.${ext}",
@@ -48,14 +47,9 @@
     "author": "Sonasoft",
     "license": "ISC",
     "devDependencies": {
-        "@electron-forge/cli": "^6.0.5",
-        "@electron-forge/maker-deb": "^6.0.5",
-        "@electron-forge/maker-rpm": "^6.0.5",
-        "@electron-forge/maker-squirrel": "^6.0.5",
-        "@electron-forge/maker-zip": "^6.0.5",
         "babel-eslint": "^10.0.1",
         "electron": "^26.2.1",
-        "electron-builder": "^24.6.4",
+        "electron-builder": "^22.14.13",
         "eslint": "^5.3.0",
         "eslint-config-scratch": "^5.0.0",
         "jsdoc": "^3.6.6",
@@ -69,7 +63,6 @@
         "cli-color": "^2.0.1",
         "download-github-release": "^0.3.2",
         "electron-log": "^4.4.8",
-        "electron-squirrel-startup": "^1.0.0",
         "electron-updater": "^6.1.4",
         "extract-zip": "^2.0.1",
         "fs": "^0.0.1-security",

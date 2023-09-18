@@ -8,7 +8,6 @@ window.addEventListener("DOMContentLoaded", async () => {
     const wraperStatusNomoLink = document.getElementById("wraperStatus");
     const wraperUpdate = document.getElementById("wraperUpdate");
     const dot = document.getElementsByClassName("dot");
-    const allowSSL = document.getElementById("allowSSL");
     const addZip = document.getElementById("addZip");
     const fileZip = document.getElementById("zipFile");
     const loader = document.getElementById("lds-roller");
@@ -38,9 +37,6 @@ window.addEventListener("DOMContentLoaded", async () => {
     async function openNomokit() {
         await shell.openExternal("https://nomo-kit.com/");
     }
-    async function allowSsl() {
-        await shell.openExternal("https:127.0.0.1:20111/");
-    }
     if (btnNomo) {
         checkPort(20111, "127.0.0.1", (isPortOpen) => {
             if (isPortOpen) {
@@ -49,23 +45,19 @@ window.addEventListener("DOMContentLoaded", async () => {
                 statusNomoLink.innerHTML = `<span class="dot"></span> Online`;
                 dot[0].style.backgroundColor = "green";
                 btnNomo.style.display = "block";
-                allowSSL.style.display = "block";
                 wraperStatusNomoLink.style.display = "block";
             } else {
                 statusNomoLink.innerHTML = `<span class="dot"></span> Offline`;
                 dot[0].style.backgroundColor = "red";
                 btnNomo.style.display = "none";
-                allowSSL.style.display = "none";
             }
         });
         btnNomo.addEventListener("click", openNomokit);
-        allowSSL.addEventListener("click", allowSsl);
         addZip.addEventListener("click", async () => {
             fileZip.click();
             fileZip.addEventListener("change", async () => {
                 loader.style.display = "block";
                 btnNomo.disabled = true;
-                allowSSL.disabled = true;
                 addZip.disabled = true;
                 const file = fileZip.files[0];
                 const reader = new FileReader();
@@ -82,7 +74,6 @@ window.addEventListener("DOMContentLoaded", async () => {
     ipcRenderer.on("addZip-reply", (event, arg) => {
         loader.style.display = "none";
         btnNomo.disabled = false;
-        allowSSL.disabled = false;
         addZip.disabled = false;
     });
     ipcRenderer.on("download-progress", function (event, text) {

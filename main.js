@@ -174,8 +174,8 @@ Menu.setApplicationMenu(menu);
 let win;
 async function createWindow() {
     win = new BrowserWindow({
-        width: 350,
-        height: 280,
+        width: 400,
+        height: 400,
         webPreferences: {
             nodeIntegration: true,
             preload: path.join(__dirname, "preload.js"),
@@ -187,7 +187,7 @@ async function createWindow() {
         resizable: false,
     });
 
-    // win.webContents.openDevTools();
+    win.webContents.openDevTools();
     var contextMenu = Menu.buildFromTemplate([
         {
             label: "Show App",
@@ -209,8 +209,6 @@ async function createWindow() {
 
     win.loadFile("index.html");
     win.on("closed", async () => {
-        console.log("closed");
-        await stopService();
         win.destroy();
         app.quit();
     });
@@ -343,7 +341,7 @@ app.whenReady().then(async () => {
 app.on("window-all-closed", () => {
     if (process.platform !== "darwin") {
         win.destroy();
-        app.exit();
+        app.quit();
     }
 });
 
@@ -390,7 +388,7 @@ app.on("ready", async () => {
             })
             .then((result) => {
                 if (result.response === 0) {
-                    autoUpdater.quitAndInstall();
+                    autoUpdater.quitAndInstall(false, true);
                 }
             });
     });

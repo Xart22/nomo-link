@@ -1,4 +1,12 @@
-const { app, BrowserWindow, Tray, Menu, ipcMain, dialog } = require("electron");
+const {
+    app,
+    BrowserWindow,
+    Tray,
+    Menu,
+    ipcMain,
+    dialog,
+    shell,
+} = require("electron");
 const path = require("path");
 const OpenBlockLink = require("./src/index");
 const axios = require("axios");
@@ -7,6 +15,7 @@ const extract = require("extract-zip");
 const Downloader = require("nodejs-file-downloader");
 const logger = require("electron-log");
 const { autoUpdater } = require("electron-updater");
+
 logger.transports.file.level = "info";
 autoUpdater.logger = logger;
 autoUpdater.autoDownload = false;
@@ -170,7 +179,7 @@ const template = [
 ];
 
 const menu = Menu.buildFromTemplate(template);
-Menu.setApplicationMenu(menu);
+
 let win;
 async function createWindow() {
     win = new BrowserWindow({
@@ -180,12 +189,13 @@ async function createWindow() {
             nodeIntegration: true,
             preload: path.join(__dirname, "preload.js"),
         },
-        icon: path.join(__dirname, "assets/icons/nomo.png"),
+        icon: path.join(__dirname, "assets/icons/nomolink.png"),
         title: "Nomokit-link",
         fullscreenable: false,
         fullscreen: false,
         resizable: false,
     });
+    Menu.setApplicationMenu(menu);
 
     // win.webContents.openDevTools();
     var contextMenu = Menu.buildFromTemplate([
@@ -203,8 +213,10 @@ async function createWindow() {
             },
         },
     ]);
-    let appIcon = new Tray(path.join(__dirname, "assets/icons/nomo.png"));
-    appIcon.setToolTip("Nomo");
+    if (process.env) {
+    }
+    let appIcon = new Tray(path.join(__dirname, "assets/icons/nomokit.png"));
+    appIcon.setToolTip("Nomolink");
     appIcon.setContextMenu(contextMenu);
 
     win.loadFile("index.html");
@@ -346,7 +358,6 @@ app.on("window-all-closed", () => {
 });
 
 app.on("minimize", function (event) {
-    console.log("minimize");
     event.preventDefault();
     app.hide();
 });
@@ -360,21 +371,39 @@ const stopService = async () => {
 app.on("ready", async () => {
     autoUpdater.checkForUpdatesAndNotify();
     autoUpdater.on("update-available", () => {
-        dialog
-            .showMessageBox({
-                type: "question",
-                title: "Update available",
-                message: "Update Version is available",
-                buttons: ["Yes", "No"],
-                yes: 0,
-                no: 1,
-            })
-            .then((result) => {
-                if (result.response === 0) {
-                    win.loadFile(path.join(__dirname, "update.html"));
-                    autoUpdater.downloadUpdate();
-                }
-            });
+        if (process.platform !== "darwin") {
+            dialog
+                .showMessageBox({
+                    type: "question",
+                    title: "Update available",
+                    message: "Update Version is available download now ?",
+                    buttons: ["Yes", "No"],
+                    yes: 0,
+                    no: 1,
+                })
+                .then((result) => {
+                    if (result.response === 0) {
+                        win.loadFile(path.join(__dirname, "update.html"));
+                        autoUpdater.downloadUpdate();
+                    }
+                });
+        } else {
+            dialog
+                .showMessageBox({
+                    type: "question",
+                    title: "Update available",
+                    message:
+                        "Update Version is available, please update manually on the web",
+                    buttons: ["Yes", "No"],
+                    yes: 0,
+                    no: 1,
+                })
+                .then((result) => {
+                    if (result.response === 0) {
+                        shell.openExternal("https://nomo-kit.com/download");
+                    }
+                });
+        }
     });
     autoUpdater.on("update-downloaded", () => {
         dialog

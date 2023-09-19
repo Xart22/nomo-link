@@ -46,10 +46,15 @@ const REOPEN_INTERVAL = 1000 * 1;
  * Configuration the server routers.
  * @readonly
  */
-const ROUTERS = {
-    "/openblock/ble": require("./session/ble"), // eslint-disable-line global-require
-    "/openblock/serialport": require("./session/serialport"), // eslint-disable-line global-require
-};
+const ROUTERS =
+    process.platform !== "darwin"
+        ? {
+              "/openblock/ble": require("./session/ble"), // eslint-disable-line global-require
+              "/openblock/serialport": require("./session/serialport"), // eslint-disable-line global-require
+          }
+        : {
+              "/openblock/serialport": require("./session/serialport"), // eslint-disable-line global-require
+          };
 
 /**
  * A server to provide local hardware api.

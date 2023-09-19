@@ -4,13 +4,13 @@
     "description": "Nomolink",
     "main": "main.js",
     "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1",
         "start": "electron .",
-        "package": "electron-forge package",
-        "build": "electron-builder",
         "fetch": "rimraf tools firmwares && node script/download-tools.js && node script/download-firmwares.js",
         "start-server": "node test/start-server.js --log-level=info",
-        "deploy": "electron-builder -p always"
+        "deploy:all": "electron-builder --mac --win -p always",
+        "deploy:mac": "electron-builder --mac -p always",
+        "deploy:win": "electron-builder --win -p always",
+        "build": "electron-builder"
     },
     "repository": "https://github.com/Xart22/nomo-link",
     "publish": {
@@ -29,6 +29,23 @@
                 "nsis"
             ],
             "icon": "assets/icons/icon.ico"
+        },
+        "mac": {
+            "category": "public.app-category.tools",
+            "gatekeeperAssess": true,
+            "hardenedRuntime": true,
+            "icon": "assets/icons/512.png",
+            "provisioningProfile": "embedded.provisionprofile",
+            "publish": [
+                "github"
+            ],
+            "target": {
+                "target": "default",
+                "arch": [
+                    "x64",
+                    "arm64"
+                ]
+            }
         },
         "nsis": {
             "artifactName": "Nomolink-setup-${version}.${ext}",
@@ -49,7 +66,7 @@
     "devDependencies": {
         "babel-eslint": "^10.0.1",
         "electron": "^26.2.1",
-        "electron-builder": "^22.14.13",
+        "electron-builder": "^23.3.3",
         "eslint": "^5.3.0",
         "eslint-config-scratch": "^5.0.0",
         "jsdoc": "^3.6.6",

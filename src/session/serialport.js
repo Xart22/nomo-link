@@ -413,9 +413,33 @@ class SerialportSession extends Session {
     }
 
     async uploadFirmware(params) {
+        console.log(params);
         switch (params.type) {
             case "arduino":
                 this.tool = new Arduino(
+                    this.peripheral.path,
+                    params,
+                    this.userDataPath,
+                    this.toolsPath,
+                    this.sendstd.bind(this)
+                );
+                try {
+                    this.sendstd(`${ansi.clear}Disconnect serial port\n`);
+                    await this.disconnect();
+                    this.sendstd(
+                        `${ansi.clear}Disconnected successfully, flash program starting...\n`
+                    );
+                    await this.tool.flashRealtimeFirmware();
+                    await this.connect(this.peripheralParams, true);
+                    this.sendRemoteRequest("uploadSuccess", null);
+                } catch (err) {
+                    this.sendRemoteRequest("uploadError", {
+                        message: ansi.red + err.message,
+                    });
+                }
+                break;
+            case "microbit":
+                this.tool = new Microbit(
                     this.peripheral.path,
                     params,
                     this.userDataPath,

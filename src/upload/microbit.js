@@ -16,6 +16,7 @@ class Microbit {
         this._userDataPath = userDataPath;
         this._projectPath = path.join(userDataPath, "microbit/project");
         this._pythonPath = path.join(toolsPath, "Python");
+        this._libPath = path.join(toolsPath, "Arduino/libraries/libraries_py");
         this._sendstd = sendstd;
 
         if (os.platform() === "darwin") {
@@ -45,10 +46,22 @@ class Microbit {
         fileToPut.push(this._codefilePath);
 
         library.forEach((lib) => {
-            if (fs.existsSync(lib)) {
-                const libraries = fs.readdirSync(lib);
+            lib = lib.replace(
+                "/home/nomoiot/.openblockData/external-resources/extensions/microbit/",
+                ""
+            );
+            lib = lib.replace("/lib", "");
+            const lastIndexAfterSlash = lib.lastIndexOf("/");
+            const wordAfterSlash = lib
+                .substring(lastIndexAfterSlash + 1)
+                .toLowerCase();
+
+            let libPath = path.join(this._libPath, wordAfterSlash);
+
+            if (fs.existsSync(libPath)) {
+                const libraries = fs.readdirSync(libPath);
                 libraries.forEach((file) => {
-                    fileToPut.push(path.join(lib, file));
+                    fileToPut.push(path.join(libPath, file));
                 });
             }
         });
@@ -103,6 +116,7 @@ class Microbit {
             ]);
 
             ufs.stdout.on("data", (buf) => {
+                console.log(buf.toString());
                 this._sendstd(ansi.red + buf.toString());
                 return resolve("Failed");
             });

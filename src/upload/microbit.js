@@ -64,6 +64,7 @@ class Microbit {
                     fileToPut.push(path.join(libPath, file));
                 });
             }
+            console.log(fileToPut);
         });
 
         const ufsTestExitCode = await this.ufsTestFirmware();

@@ -8,13 +8,14 @@ const {
     shell,
 } = require("electron");
 const path = require("path");
-const OpenBlockLink = require("./src/index");
+
 const axios = require("axios");
-const fs = require("fs");
 const extract = require("extract-zip");
 const Downloader = require("nodejs-file-downloader");
 const logger = require("electron-log");
 const { autoUpdater } = require("electron-updater");
+const OpenBlockLink = require("./link/src/index");
+const fs = require("fs-extra");
 
 logger.transports.file.level = "info";
 autoUpdater.logger = logger;
@@ -36,34 +37,42 @@ const startService = async () => {
 
 const syncLibary = async () => {
     try {
-        const localDir = path.join(__dirname, "tools/Arduino/local");
+        const localDir = path.join(__dirname, "link/tools/Arduino/local");
         if (!fs.existsSync(localDir)) {
             fs.mkdirSync(localDir);
         }
 
         const versionFile = JSON.parse(
-            fs.readFileSync(path.join(__dirname, "tools/version.json"), "utf8")
+            fs.readFileSync(
+                path.join(__dirname, "link/tools/version.json"),
+                "utf8"
+            )
         );
         const response = await axios.get(
             "https://nomo-kit.com/api/check-update"
         );
         const data = response.data;
         if (data.version !== versionFile.version) {
-            fs.rmSync(path.join(__dirname, "tools/Arduino/libraries"), {
+            fs.rmSync(path.join(__dirname, "link/tools/Arduino/libraries"), {
                 recursive: true,
                 force: true,
             });
 
             const downloader = new Downloader({
                 url: data.url,
-                directory: path.join(__dirname, "tools/Arduino/libraries"),
+                directory: path.join(__dirname, "link/tools/Arduino/libraries"),
             });
 
             const { filePath, downloadStatus } = await downloader.download();
             if (downloadStatus === "COMPLETE") {
                 await extract(
                     filePath,
-                    { dir: path.join(__dirname, "tools/Arduino/libraries") },
+                    {
+                        dir: path.join(
+                            __dirname,
+                            "link/tools/Arduino/libraries"
+                        ),
+                    },
                     function (err) {
                         if (err) {
                             console.log(err);
@@ -72,19 +81,19 @@ const syncLibary = async () => {
                 );
 
                 fs.readdir(
-                    path.join(__dirname, "tools/Arduino/libraries"),
+                    path.join(__dirname, "link/tools/Arduino/libraries"),
                     (err, files) => {
                         files.forEach(async (file) => {
                             if (file !== data.version + ".zip") {
                                 await extract(
                                     path.join(
                                         __dirname,
-                                        "tools/Arduino/libraries/" + file
+                                        "link/tools/Arduino/libraries/" + file
                                     ),
                                     {
                                         dir: path.join(
                                             __dirname,
-                                            "tools/Arduino/libraries"
+                                            "link/tools/Arduino/libraries"
                                         ),
                                     },
                                     function (err) {
@@ -96,14 +105,14 @@ const syncLibary = async () => {
                                 fs.unlinkSync(
                                     path.join(
                                         __dirname,
-                                        "tools/Arduino/libraries/" + file
+                                        "link/tools/Arduino/libraries/" + file
                                     )
                                 );
                             } else {
                                 fs.unlinkSync(
                                     path.join(
                                         __dirname,
-                                        "tools/Arduino/libraries",
+                                        "link/tools/Arduino/libraries",
                                         file
                                     )
                                 );
@@ -112,19 +121,19 @@ const syncLibary = async () => {
                     }
                 );
                 fs.readdir(
-                    path.join(__dirname, "tools/Arduino/local"),
+                    path.join(__dirname, "link/tools/Arduino/local"),
                     (err, files) => {
                         files.forEach(async (file) => {
                             if (file.includes(".zip")) {
                                 await extract(
                                     path.join(
                                         __dirname,
-                                        "tools/Arduino/local/" + file
+                                        "link/tools/Arduino/local/" + file
                                     ),
                                     {
                                         dir: path.join(
                                             __dirname,
-                                            "tools/Arduino/libraries"
+                                            "link/tools/Arduino/libraries"
                                         ),
                                     }
                                 );
@@ -134,7 +143,7 @@ const syncLibary = async () => {
                 );
 
                 fs.writeFileSync(
-                    path.join(__dirname, "tools/version.json"),
+                    path.join(__dirname, "link/tools/version.json"),
                     JSON.stringify(data)
                 );
             }
@@ -144,7 +153,7 @@ const syncLibary = async () => {
     }
 };
 const localLib = JSON.parse(
-    fs.readFileSync(path.join(__dirname, "tools/localLib.json"), "utf8")
+    fs.readFileSync(path.join(__dirname, "/localLib.json"), "utf8")
 );
 
 const kill = require("kill-port");
@@ -197,7 +206,7 @@ async function createWindow() {
     });
     Menu.setApplicationMenu(menu);
 
-    // win.webContents.openDevTools();
+    //win.webContents.openDevTools();
     var contextMenu = Menu.buildFromTemplate([
         {
             label: "Show App",
@@ -233,7 +242,7 @@ async function createWindow() {
         console.log("get-libary-path");
         event.reply(
             "get-libary-path-reply",
-            path.join(__dirname, "tools/Arduino/libraries")
+            path.join(__dirname, "link/tools/Arduino/libraries")
         );
     });
 
@@ -243,16 +252,16 @@ async function createWindow() {
 
         try {
             fs.writeFileSync(
-                path.join(__dirname, "tools/Arduino/local/" + fileName),
+                path.join(__dirname, "local/" + fileName),
                 Buffer.from(file),
                 (err) => {
                     console.log(err);
                 }
             );
             await extract(
-                path.join(__dirname, "tools/Arduino/local/" + fileName),
+                path.join(__dirname, "local/" + fileName),
                 {
-                    dir: path.join(__dirname, "tools/Arduino/local"),
+                    dir: path.join(__dirname, "local"),
                 },
                 function (err) {
                     if (err) {
@@ -264,9 +273,9 @@ async function createWindow() {
             const localLib = await readFileLocal();
 
             await extract(
-                path.join(__dirname, "tools/Arduino/local/" + fileName),
+                path.join(__dirname, "local/" + fileName),
                 {
-                    dir: path.join(__dirname, "tools/Arduino/libraries"),
+                    dir: path.join(__dirname, "link/tools/Arduino/libraries"),
                 },
                 function (err) {
                     if (err) {
@@ -275,7 +284,7 @@ async function createWindow() {
                 }
             );
             fs.writeFileSync(
-                path.join(__dirname, "tools/localLib.json"),
+                path.join(__dirname, "localLib.json"),
                 JSON.stringify(localLib)
             );
             dialog.showMessageBox({
@@ -332,7 +341,7 @@ async function createWindow() {
 
 async function readFileLocal() {
     const filesName = [];
-    fs.readdir(path.join(__dirname, "tools/Arduino/local"), (err, files) => {
+    fs.readdir(path.join(__dirname, "local"), (err, files) => {
         files.forEach(async (file) => {
             if (!file.includes(".zip")) {
                 filesName.push(file + ".h");
@@ -343,11 +352,28 @@ async function readFileLocal() {
 }
 
 app.whenReady().then(async () => {
-    await syncLibary();
-    startService();
     if (BrowserWindow.getAllWindows().length === 0) {
         createWindow();
+        await checkToolsUpdate().then(async () => {
+            await syncLibary();
+        });
+        startService();
+        localLib.forEach(async (fileName) => {
+            let flname = fileName.replace(".h", ".zip");
+            await extract(
+                path.join(__dirname, "local/" + flname),
+                {
+                    dir: path.join(__dirname, "link/tools/Arduino/libraries"),
+                },
+                function (err) {
+                    if (err) {
+                        console.log(err);
+                    }
+                }
+            );
+        });
     }
+    fs.removeSync(path.join(__dirname, "/update/link"));
 });
 
 app.on("window-all-closed", () => {
@@ -428,3 +454,105 @@ app.on("ready", async () => {
         win.webContents.send("download-progress", progressObj.percent);
     });
 });
+
+async function checkToolsUpdate() {
+    logger.info("Syncing Link");
+    try {
+        const version = JSON.parse(
+            fs.readFileSync(path.join(__dirname, "version.json"), "utf8")
+        );
+        const response = await axios.get(
+            "https://nomo-kit.com/api/check-update-dektop"
+        );
+        const data = response.data;
+        fs.writeFileSync(
+            path.join(__dirname, "/version.json"),
+            JSON.stringify(data)
+        );
+        if (data.link !== version.link) {
+            dialog
+                .showMessageBox({
+                    type: "question",
+                    title: "Update",
+                    message:
+                        "Update available for Link, do you want to update now?",
+                    buttons: ["Yes", "No"],
+                })
+                .then(async (res) => {
+                    if (res.response === 0) {
+                        win.loadFile(path.join(__dirname, "/update.html"));
+                        const downloader = new Downloader({
+                            url: data.link_url,
+                            directory: path.join(__dirname, "/update"),
+                            onProgress: function (
+                                percentage,
+                                chunk,
+                                remainingSize
+                            ) {
+                                win.webContents.send(
+                                    "download-progress",
+                                    percentage
+                                );
+                            },
+                        });
+                        const { filePath, downloadStatus } =
+                            await downloader.download();
+                        if (downloadStatus === "COMPLETE") {
+                            //here update
+                            await extract(
+                                filePath,
+                                { dir: path.join(__dirname, "/update") },
+                                function (err) {
+                                    if (err) {
+                                        console.log(err);
+                                    }
+                                }
+                            ).then(() => {
+                                fs.copySync(
+                                    path.join(__dirname, "/update"),
+                                    path.join(__dirname),
+                                    {
+                                        overwrite: true,
+                                    }
+                                );
+
+                                fs.writeFileSync(
+                                    path.join(__dirname, "/version.json"),
+                                    JSON.stringify(data)
+                                );
+
+                                dialog
+                                    .showMessageBox({
+                                        type: "info",
+                                        title: "Success",
+                                        message: "Update success",
+                                    })
+                                    .then(async (res) => {
+                                        fs.readdir(
+                                            path.join(__dirname, "/update"),
+                                            (err, files) => {
+                                                files.forEach((file) => {
+                                                    if (file == "link.zip") {
+                                                        fs.unlinkSync(
+                                                            path.join(
+                                                                __dirname,
+                                                                "/update",
+                                                                file
+                                                            )
+                                                        );
+                                                    }
+                                                });
+                                            }
+                                        );
+                                        app.relaunch();
+                                        app.exit();
+                                    });
+                            });
+                        }
+                    }
+                });
+        }
+    } catch (error) {
+        console.log(error);
+    }
+}

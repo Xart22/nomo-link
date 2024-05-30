@@ -5,8 +5,7 @@ node_modules/
 .DS_Store
 
 # Binary tools
-tools/
-firmwares/
+link/
 dist/
 
 out/

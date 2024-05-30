@@ -10,6 +10,8 @@ const usbId = {
     "USB\\VID_0403&PID_6010": "USB-SERIAL FTDI",
     // Arduino Nano 33 BLE
     "USB\\VID_2341&PID_805A": "Arduino Nano 33 BLE Sense",
+    // Arduino Uno R4 Wifi
+    "USB\\VID_2341&PID_1002": "Arduino Uno R4 Wifi",
     // CP2102
     "USB\\VID_10C4&PID_EA60": "USB-SERIAL CP2102",
     // Arduino Uno

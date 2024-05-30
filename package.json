@@ -1,6 +1,6 @@
 {
     "name": "nomolink",
-    "version": "1.0.10",
+    "version": "1.0.11",
     "description": "Nomolink",
     "main": "main.js",
     "scripts": {
